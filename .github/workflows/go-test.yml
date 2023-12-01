@@ -20,4 +20,6 @@ jobs:
           go-version: "stable"
 
       - name: Run
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: go run -v ./...
