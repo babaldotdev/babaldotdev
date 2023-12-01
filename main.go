@@ -17,7 +17,7 @@ import (
 func main() {
 
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+		log.Printf("Error loading .env file: %v", err)
 	}
 	// Set up authentication using a personal access token
 	// For local create .env file, for GitHub actions see workflow yaml file
