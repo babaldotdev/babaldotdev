@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"sort"
@@ -15,12 +14,9 @@ import (
 )
 
 func main() {
-
 	if err := godotenv.Load(); err != nil {
 		log.Printf("Error loading .env file: %v", err)
 	}
-	// Set up authentication using a personal access token
-	// For local create .env file, for GitHub actions see workflow yaml file
 	token := os.Getenv("GH_TOKEN")
 	if token == "" {
 		log.Fatal("Please set the GH_TOKEN environment variable")
@@ -28,22 +24,15 @@ func main() {
 	ctx := context.Background()
 	client := github.NewClient(oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})))
 
-	// Check if we can get authenticated user
-	_, _, err := client.Users.Get(ctx, "")
-	if err != nil {
-		log.Fatalf("Failed to get user: %v", err)
-	}
 	allRepos := getAllUserRepository(&ctx, client)
-	langMap := getLanguageUsedWithProjectCount(ctx, client, allRepos)
+	langMap := getLanguageMapByContentByte(ctx, client, allRepos)
 	sortedLanguage := getSortedLanguageByUsage(langMap)
 
-	for i, lang := range sortedLanguage[:5] {
-		fmt.Printf("%d. %s: (%d)\n", i+1, lang, langMap[lang])
-	}
-
+	html := generateHtml(langMap, sortedLanguage[:5])
+	updateReadme(html)
 }
 
-func getLanguageUsedWithProjectCount(ctx context.Context, client *github.Client, allRepos []*github.Repository) map[string]int {
+func getLanguageMapByContentByte(ctx context.Context, client *github.Client, allRepos []*github.Repository) map[string]int {
 	languages := make(map[string]int)
 	for _, repo := range allRepos {
 		langs, _, err := client.Repositories.ListLanguages(ctx, *repo.Owner.Login, *repo.Name)
@@ -51,8 +40,10 @@ func getLanguageUsedWithProjectCount(ctx context.Context, client *github.Client,
 			log.Printf("Failed to list languages for repository %s: %v", *repo.FullName, err)
 			continue
 		}
-		for lang := range langs {
-			languages[lang]++
+		for lang, contentByte := range langs {
+			if !includesInCsv(os.Getenv("EXCLUDE_LANGS"), lang) {
+				languages[lang] += contentByte
+			}
 		}
 	}
 	return languages
@@ -71,8 +62,6 @@ func getSortedLanguageByUsage(langMap map[string]int) []string {
 
 func getAllUserRepository(ctx *context.Context, client *github.Client) []*github.Repository {
 	var allRepos []*github.Repository
-
-	// Get the user's repositories
 	opt := &github.RepositoryListOptions{
 		Affiliation: "owner,collaborator",
 		ListOptions: github.ListOptions{PerPage: 100},
@@ -83,7 +72,7 @@ func getAllUserRepository(ctx *context.Context, client *github.Client) []*github
 			log.Fatalf("Failed to list repositories: %v", err)
 		}
 		for _, repo := range repos {
-			if hasCommitThisYear(repo.PushedAt) && !includesInCsv(os.Getenv("EXCLUDE_REPOS"), *repo.Name) {
+			if hasCommitInLast12Months(repo.PushedAt) && !includesInCsv(os.Getenv("EXCLUDE_REPOS"), *repo.Name) {
 				allRepos = append(allRepos, repo)
 			}
 		}
@@ -92,6 +81,7 @@ func getAllUserRepository(ctx *context.Context, client *github.Client) []*github
 		}
 		opt.Page = resp.NextPage
 	}
+
 	if os.Getenv("PRINT_PROJECT_NAME") == "TRUE" {
 		for _, repo := range allRepos {
 			log.Printf("Found repository: %s", *repo.FullName)
@@ -101,7 +91,7 @@ func getAllUserRepository(ctx *context.Context, client *github.Client) []*github
 	return allRepos
 }
 
-func hasCommitThisYear(pushedAt *github.Timestamp) bool {
+func hasCommitInLast12Months(pushedAt *github.Timestamp) bool {
 	now := time.Now()
 	lastTouchDate := pushedAt.Time
 	diff := now.Sub(lastTouchDate)

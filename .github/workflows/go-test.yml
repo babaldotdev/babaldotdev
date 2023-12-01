@@ -22,4 +22,13 @@ jobs:
       - name: Run
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: go run -v ./...
+          EXCLUDE_REPOS: ${{ secrets.EXCLUDE_REPOS }}
+        run: go run -v ./cmd/language_stat_generator
+
+      - name: Update Readme.md
+        run: |
+          git add Readme.md
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update Readme.md"
+          git push -u origin main
