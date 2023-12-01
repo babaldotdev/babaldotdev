@@ -4,6 +4,7 @@
 
 ## Language I have touched in last 12 months
 
+<div style="display: flex">
 <!-- Start: LangStat  -->
 <div class="lang-stat">
 		<div class="lang-diagram">
@@ -74,3 +75,4 @@
     }
 </style>
 <!-- End: LangStat  -->
+</div>

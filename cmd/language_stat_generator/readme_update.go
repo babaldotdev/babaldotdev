@@ -23,7 +23,7 @@ func updateReadme(html string) {
 	// Update the content between the markers
 	if startIndex != -1 && endIndex != -1 && startIndex < endIndex {
 		newContent := string(content[:startIndex+len(startMarker)]) + "\n" +
-			html +
+			`<img src="` + html + `">` + "\n" +
 			string(content[endIndex:])
 		err = os.WriteFile(filePath, []byte(newContent), 0644)
 		if err != nil {

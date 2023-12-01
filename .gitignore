@@ -27,3 +27,8 @@ go.work
 # IDE Files
 *.iml
 .idea/
+
+# Image Artifact
+*.png
+*.jpeg
+*.jpg
