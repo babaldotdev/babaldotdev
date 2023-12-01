@@ -3,14 +3,14 @@ package main
 import (
 	"context"
 	"encoding/base64"
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/chromedp/chromedp"
 )
 
 // Inspired from: https://github.com/chromedp/examples/blob/master/screenshot/main.go
-func GenerateDataImageUrl(htmlString string) string {
+func GenerateDataImageUrl(htmlString string) {
 	// create context
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
@@ -21,7 +21,14 @@ func GenerateDataImageUrl(htmlString string) string {
 	if err := chromedp.Run(ctx, elementScreenshot(htmlDataUrl, `body`, &buf)); err != nil {
 		log.Fatal(err)
 	}
-	dataURL := fmt.Sprintf("data:image/jpg;base64,%s", base64.StdEncoding.EncodeToString(buf))
+	if err := os.WriteFile("lang-stat.png", buf, 0o644); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func imageToDataUrl(image []byte) string {
+	base64Image := base64.StdEncoding.EncodeToString(image)
+	dataURL := "data:image/png;base64," + base64Image
 	return dataURL
 }
 

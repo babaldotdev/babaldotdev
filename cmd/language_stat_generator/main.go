@@ -29,8 +29,8 @@ func main() {
 	sortedLanguage := getSortedLanguageByUsage(langMap)
 
 	html := generateHtml(langMap, sortedLanguage[:5])
-	dataImageUrl := GenerateDataImageUrl(html)
-	updateReadme(dataImageUrl)
+	GenerateDataImageUrl(html)
+	// No need to update readme as image URL will be same
 }
 
 func getLanguageMapByContentByte(ctx context.Context, client *github.Client, allRepos []*github.Repository) map[string]int {
