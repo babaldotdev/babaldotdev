@@ -84,7 +84,7 @@ func main() {
 		outGif.Delay = append(outGif.Delay, 0)
 	}
 
-	f, _ := os.OpenFile("out.gif", os.O_WRONLY|os.O_CREATE, 0o644)
+	f, _ := os.OpenFile("animated-greeting.gif", os.O_WRONLY|os.O_CREATE, 0o644)
 	defer func(f *os.File) {
 		err := f.Close()
 		if err != nil {
