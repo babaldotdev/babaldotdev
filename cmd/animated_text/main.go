@@ -28,14 +28,14 @@ func main() {
 		panic(1)
 	}
 
-	nFrame := 75
+	nFrame := 150
 	var buf bytes.Buffer
 	err = tpl.Execute(&buf, struct {
 		FrameDetails map[int]string
 		Text         string
 	}{
 		FrameDetails: getFrameDetails(nFrame),
-		Text:         strings.ReplaceAll("Hey, This is Aman", " ", "&nbsp;"),
+		Text:         strings.ReplaceAll("(0__o) Hey, I am Aman. Nice to meet you.", " ", "&nbsp;"),
 	})
 
 	if err != nil {
@@ -105,10 +105,10 @@ func getFrameDetails(n int) map[int]string {
 	for i := 0; i < n; i++ {
 		percentage := float32(i+1) / float32(n) * 100.0
 
-		if percentage <= 40 {
-			percentage = percentage / 40.0 * 100
-		} else if percentage >= 70 {
-			percentage = (100 - percentage) / 30.0 * 100
+		if percentage <= 35 {
+			percentage = percentage / 35 * 100
+		} else if percentage >= 80 {
+			percentage = (100 - percentage) / 20.0 * 100
 		} else {
 			percentage = 100.0
 		}

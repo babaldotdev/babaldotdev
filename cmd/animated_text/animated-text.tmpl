@@ -1,6 +1,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@600&display=swap" rel="stylesheet">
 
 {{ range $idx, $percentage := .FrameDetails }}
 <span id="frame-{{ $idx }}" class="container">
@@ -8,20 +8,23 @@
     {{ $.Text }}
   </span>
 </span>
-<br/>
 {{end}}
 
 
 <style>
+* {
+  box-sizing: border-box;
+}
 .container {
   background-color: rgb(14, 17, 23);
   padding: 10px;
   display: inline-block;
+  border: 1px solid rgb(14, 17, 23);
 }
 
 span {
   font-family: 'Fira Code', monospace;
-  font-size: 1.2rem;
+  font-size: 2rem;
   color: rgb(14, 17, 23);
   position: relative;
 }
@@ -32,7 +35,7 @@ span::after {
   position: absolute;
   top: 0;
   left: 0;
-  color: red;
+  color: rgb(183, 245, 91);
   width: var(--percentage);
   height: 100%;
   overflow: hidden;
