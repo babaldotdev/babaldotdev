@@ -47,7 +47,10 @@ func generateHtml(languageStats map[string]int, langs []string) string {
 	return buf.String()
 }
 
-const templateString = `<div class="lang-stat">
+const templateString = `<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+<div class="lang-stat">
 		<div class="lang-diagram">
 			{{range $idx, $lang := .Langs}} <div>&nbsp;</div> {{end}}
 		</div>
@@ -62,6 +65,10 @@ const templateString = `<div class="lang-stat">
         grid-template-columns: {{ .GridTemplateColumns }} ;
     }
     .lang-stat {
+        font-family: 'Fira Code', monospace;
+		background-color: rgb(14, 17, 23);
+		color: white;
+        padding: 10px;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;

@@ -10,15 +10,14 @@ import (
 )
 
 // Inspired from: https://github.com/chromedp/examples/blob/master/screenshot/main.go
-func GenerateDataImageUrl(htmlString string) {
-	// create context
+func GenerateDataImageUrl(htmlString, selector string) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
 	var htmlDataUrl = htmlStringToDataUrl(htmlString)
 
 	var buf []byte
-	if err := chromedp.Run(ctx, elementScreenshot(htmlDataUrl, `body`, &buf)); err != nil {
+	if err := chromedp.Run(ctx, elementScreenshot(htmlDataUrl, selector, &buf)); err != nil {
 		log.Fatal(err)
 	}
 	if err := os.WriteFile("lang-stat.png", buf, 0o644); err != nil {

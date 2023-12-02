@@ -29,7 +29,7 @@ func main() {
 	sortedLanguage := getSortedLanguageByUsage(langMap)
 
 	html := generateHtml(langMap, sortedLanguage[:5])
-	GenerateDataImageUrl(html)
+	GenerateDataImageUrl(html, "div.lang-stat")
 	// No need to update readme as image URL will be same
 }
 
