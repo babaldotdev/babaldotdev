@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"os"
 	"text/template"
 )
 
@@ -24,7 +25,12 @@ func generateHtml(languageStats map[string]int, langs []string) string {
 	}
 
 	// Create a template from the string
-	t, err := template.New("htmlTemplate").Funcs(template.FuncMap{}).Parse(templateString)
+	templateByte, err := os.ReadFile("./cmd/language_stat_generator/lang-stat.tmpl")
+	if err != nil {
+		log.Fatalf("Unable to read lang-stat.tmpl file")
+	}
+	htmlTemplate := string(templateByte)
+	t, err := template.New("htmlTemplate").Funcs(template.FuncMap{}).Parse(htmlTemplate)
 	if err != nil {
 		log.Fatalf("Failed to parse template: %v", err)
 	}
@@ -46,80 +52,3 @@ func generateHtml(languageStats map[string]int, langs []string) string {
 
 	return buf.String()
 }
-
-const templateString = `<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap" rel="stylesheet">
-<div class="lang-stat">
-		<div class="lang-diagram">
-			{{range $idx, $lang := .Langs}} <div>&nbsp;</div> {{end}}
-		</div>
-		<div class="lang-detail">
-			{{range $idx, $lang := .Langs}} <div class="lang"> <span class="lang-color">&nbsp;</span> <span>{{ $lang }} {{ index $.LanguageStats $lang }}</span> </div> {{end}}
-		</div>
-	</div>
-	<style>
-    .lang-diagram {
-        display: grid;
-        grid-auto-flow: column;
-        grid-template-columns: {{ .GridTemplateColumns }} ;
-    }
-    .lang-stat {
-        font-family: 'Fira Code', monospace;
-		background-color: rgb(14, 17, 23);
-		color: white;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    .lang-detail {
-        font-size: .8rem;
-    }
-    .lang-diagram>*:first-child {
-        border-top-left-radius: 10px;
-        border-bottom-left-radius: 10px;
-    }
-    .lang-diagram>*:last-child {
-        border-top-right-radius: 10px;
-        border-bottom-right-radius: 10px;
-    }
-    .lang-detail {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-    .lang {
-        display: flex;
-        gap: .5rem;
-        align-items: center;
-    }
-    .lang-color {
-        aspect-ratio: 1/1;
-        display: inline-block;
-        min-width: 0.8rem;
-        max-width: 0.8rem;
-        border-radius: 100%;
-    }
-    .lang-diagram>*:nth-child(1),
-    .lang:nth-child(1)>.lang-color {
-        background-color: rgb(238, 225, 112);
-    }
-    .lang-diagram>*:nth-child(2),
-    .lang:nth-child(2)>.lang-color {
-        background-color: rgb(210, 87, 53);
-    }
-    .lang-diagram>*:nth-child(3),
-    .lang:nth-child(3)>.lang-color {
-        background-color: rgb(68, 118, 192);
-    }
-    .lang-diagram>*:nth-child(4),
-    .lang:nth-child(4)>.lang-color {
-        background-color: rgb(82, 62, 120);
-    }
-    .lang-diagram>*:nth-child(5),
-    .lang:nth-child(5)>.lang-color {
-        background-color: rgb(97, 133, 162);
-    }
-</style>
-`

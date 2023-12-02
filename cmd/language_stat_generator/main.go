@@ -15,7 +15,7 @@ import (
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Printf("Error loading .env file: %v", err)
+		log.Printf("Error loading .env file: %v\n", err)
 	}
 	token := os.Getenv("GH_TOKEN")
 	if token == "" {
