@@ -5,7 +5,6 @@ go 1.21.4
 require (
 	github.com/chromedp/chromedp v0.9.3
 	github.com/google/go-github v17.0.0+incompatible
-	github.com/google/go-github/v39 v39.2.0
 	github.com/joho/godotenv v1.5.1
 	golang.org/x/oauth2 v0.15.0
 )
@@ -20,7 +19,6 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
-	golang.org/x/crypto v0.16.0 // indirect
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
