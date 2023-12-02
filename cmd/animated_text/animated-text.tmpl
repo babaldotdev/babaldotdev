@@ -1,0 +1,40 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+
+{{ range $idx, $percentage := .FrameDetails }}
+<span id="frame-{{ $idx }}" class="container">
+  <span data-word="{{ $.Text }}" style="--percentage: {{ $percentage }}%">
+    {{ $.Text }}
+  </span>
+</span>
+<br/>
+{{end}}
+
+
+<style>
+.container {
+  background-color: rgb(14, 17, 23);
+  padding: 10px;
+  display: inline-block;
+}
+
+span {
+  font-family: 'Fira Code', monospace;
+  font-size: 2rem;
+  color: rgb(14, 17, 23);
+  position: relative;
+}
+
+span::after {
+  font-family: 'Fira Code', monospace;
+  content: attr(data-word);
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: red;
+  width: var(--percentage);
+  height: 100%;
+  overflow: hidden;
+}
+</style>

@@ -3,13 +3,13 @@ package html_to_image
 import (
 	"context"
 	"encoding/base64"
-	"log"
+	"log/slog"
 	"os"
+	"time"
 
 	"github.com/chromedp/chromedp"
 )
 
-// Inspired from: https://github.com/chromedp/examples/blob/master/screenshot/main.go
 func Save(htmlString, elementSelector, fileName string) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
@@ -18,12 +18,42 @@ func Save(htmlString, elementSelector, fileName string) {
 
 	var buf []byte
 	if err := chromedp.Run(ctx, elementScreenshot(htmlDataUrl, elementSelector, &buf)); err != nil {
-		log.Fatal(err)
+		slog.Error("Unable to take screenshot", "selector", elementSelector, "err", err)
+		panic(1)
 	}
 	if err := os.WriteFile(fileName, buf, 0o644); err != nil {
-		// if err := os.WriteFile("lang-stat.png", buf, 0o644); err != nil {
-		log.Fatal(err)
+		slog.Error("Unable to save image to a file", "fileName", fileName, "err", err)
+		panic(1)
 	}
+}
+
+func ImageByteMulti(htmlString string, elementSelectors []string) [][]byte {
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+	var htmlDataUrl = htmlStringToDataUrl(htmlString)
+
+	// Load the HTML first
+	if err := chromedp.Run(ctx, chromedp.Tasks{
+		chromedp.Navigate(htmlDataUrl),
+		chromedp.Sleep(500 * time.Millisecond), // Give chrome time to load font
+	}); err != nil {
+		slog.Error("Unable to navigate to URl")
+		panic(1)
+	}
+
+	// Start to take screenshot
+	allBytes := make([][]byte, len(elementSelectors))
+	for i, selector := range elementSelectors {
+		var imgByte []byte
+		if err := chromedp.Run(ctx, chromedp.Tasks{
+			chromedp.Screenshot(selector, &imgByte, chromedp.NodeVisible),
+		}); err != nil {
+			slog.Error("Unable to take a screenshot of frame ", "i", i, "err", err)
+			panic(1)
+		}
+		allBytes[i] = imgByte
+	}
+	return allBytes
 }
 
 func imageToDataUrl(image []byte) string {
