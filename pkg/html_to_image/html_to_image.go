@@ -1,4 +1,4 @@
-package main
+package html_to_image
 
 import (
 	"context"
@@ -10,17 +10,18 @@ import (
 )
 
 // Inspired from: https://github.com/chromedp/examples/blob/master/screenshot/main.go
-func GenerateDataImageUrl(htmlString, selector string) {
+func Save(htmlString, elementSelector, fileName string) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
 	var htmlDataUrl = htmlStringToDataUrl(htmlString)
 
 	var buf []byte
-	if err := chromedp.Run(ctx, elementScreenshot(htmlDataUrl, selector, &buf)); err != nil {
+	if err := chromedp.Run(ctx, elementScreenshot(htmlDataUrl, elementSelector, &buf)); err != nil {
 		log.Fatal(err)
 	}
-	if err := os.WriteFile("lang-stat.png", buf, 0o644); err != nil {
+	if err := os.WriteFile(fileName, buf, 0o644); err != nil {
+		// if err := os.WriteFile("lang-stat.png", buf, 0o644); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -37,7 +38,6 @@ func htmlStringToDataUrl(html string) string {
 	return dataURL
 }
 
-// elementScreenshot takes a screenshot of a specific element.
 func elementScreenshot(url, sel string, res *[]byte) chromedp.Tasks {
 	return chromedp.Tasks{
 		chromedp.Navigate(url),
