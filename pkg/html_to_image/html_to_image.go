@@ -27,7 +27,7 @@ func Save(htmlString, elementSelector, fileName string) {
 	}
 }
 
-func ImageByteMulti(htmlString string, elementSelectors []string) [][]byte {
+func ImageByteMulti(htmlString string, elementSelectors []string) ([][]byte, error) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 	var htmlDataUrl = htmlStringToDataUrl(htmlString)
@@ -38,7 +38,7 @@ func ImageByteMulti(htmlString string, elementSelectors []string) [][]byte {
 		chromedp.Sleep(500 * time.Millisecond), // Give chrome time to load font
 	}); err != nil {
 		slog.Error("Unable to navigate to URl")
-		panic(1)
+		return nil, err
 	}
 
 	// Start to take screenshot
@@ -49,11 +49,11 @@ func ImageByteMulti(htmlString string, elementSelectors []string) [][]byte {
 			chromedp.Screenshot(selector, &imgByte, chromedp.NodeVisible),
 		}); err != nil {
 			slog.Error("Unable to take a screenshot of frame ", "i", i, "err", err)
-			panic(1)
+			return nil, err
 		}
 		allBytes[i] = imgByte
 	}
-	return allBytes
+	return allBytes, nil
 }
 
 func imageToDataUrl(image []byte) string {
