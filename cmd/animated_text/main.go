@@ -35,7 +35,7 @@ func main() {
 		Text         string
 	}{
 		FrameDetails: getFrameDetails(nFrame),
-		Text:         strings.ReplaceAll("(0__o) Hey, I am Aman. Nice to meet you.", " ", "&nbsp;"),
+		Text:         strings.ReplaceAll("(0__o) &#128591; I am Aman. Nice to meet you &#128076;", " ", "&nbsp;"),
 	})
 
 	if err != nil {
